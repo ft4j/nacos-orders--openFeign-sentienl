@@ -1,0 +1,31 @@
+server:
+  port: 8040
+#应用名称（nacos会将该名称作为服务的名称注册）
+spring:
+  application:
+    name: nacos-order
+    #配置nacos地址
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      discovery:
+        #nacos的默认账号密码即使nacos
+        username: nacos
+        password: nacos
+        #命名空间可以用来将服务隔离在各个不同的空间中方便管理
+        #例如可以格利城dev fat等
+        namespace: public
+#配置feign的对应项目的连接超时时间超时时间和读取超时时间  这里配置的是请求nacos-product时的超时时间
+feign:
+  client:
+    config:
+      nacos-product:
+        connectTimeout: 5000
+        readTimeout: 5000
+        #        配置feign拦截器 方括号中表示这是第几个拦截器 物品们这里配置两个
+        requestInterceptors[0]: com.tuling.springcloud.orders.feignIntercept.FirstInterceptor
+        requestInterceptors[1]: com.tuling.springcloud.orders.feignIntercept.SecondInterceptor
+#设置一个轮询策略
+nacos-stock:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule

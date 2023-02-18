@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuling.springcloud.orders.domain.UuMapper">
+    <resultMap id="resultMap" type="com.tuling.springcloud.orders.domain.ResultMapBean">
+        <id column="id" property="id"></id>
+        <result column="age" property="heihei"></result>
+        <result column="name" property="haha"></result>
+    </resultMap>
+
+    <select id="query1" parameterType="java.lang.String" resultType="com.tuling.springcloud.orders.domain.Uu">
+        select * from user where name = #{name} and age = '18'
+    </select>
+
+    <select id="query11" parameterType="java.lang.String" resultType="com.tuling.springcloud.orders.domain.Uu">
+        select * from user where name = #{name}
+    </select>
+
+    <select id="queryForMap" parameterType="java.lang.String" resultType="java.util.Map">
+        select * from user where name = #{name} and age = '18'
+    </select>
+
+    <select id="queryForResult" parameterType="java.lang.String" resultMap="resultMap">
+        select * from user where name = #{name} and age = '18'
+    </select>
+
+    <select id="queryForResult11" parameterType="java.lang.String" resultMap="resultMap">
+        select * from user where name = #{name}
+    </select>
+
+    <select id="queryForObject" parameterType="com.tuling.springcloud.orders.domain.User" resultMap="resultMap">
+        select * from user where name = #{user.name}
+    </select>
+</mapper>
