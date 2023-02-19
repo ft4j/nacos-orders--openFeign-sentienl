@@ -225,4 +225,10 @@ public class ProducerService {
         String o = rocketMQTemplate.sendAndReceive("", "", String.class);
     }
 
+
+    public String sendOneMsg(){
+        SendResult sendResult = rocketMQTemplate.syncSend("testMsg", "测试消息的消息体");
+        return sendResult.getSendStatus().toString();
+    }
+
 }

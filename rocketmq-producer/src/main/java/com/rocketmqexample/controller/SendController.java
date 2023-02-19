@@ -44,4 +44,14 @@ public class SendController {
         producerService.发送普通消息();
         return "OK";
     }
+
+    @RequestMapping("sendOneMsg")
+    public String sendOneMsg(){
+        String s = producerService.sendOneMsg();
+        return s;
+    }
+
+
+
+
 }
