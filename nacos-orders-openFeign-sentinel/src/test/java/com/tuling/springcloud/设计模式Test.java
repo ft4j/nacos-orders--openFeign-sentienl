@@ -17,6 +17,7 @@ import com.tuling.springcloud.orders.设计模式.建造者模式.MealBuilder;
 import com.tuling.springcloud.orders.设计模式.建造者模式.Meala;
 import com.tuling.springcloud.orders.设计模式.结构型一桥接模式.BrandHuawei;
 import com.tuling.springcloud.orders.设计模式.结构型一桥接模式.Computer;
+import com.tuling.springcloud.orders.设计模式.结构型一桥接模式.NoteComputer;
 import com.tuling.springcloud.orders.设计模式.结构型一桥接模式.PcComputer;
 import com.tuling.springcloud.orders.设计模式.结构型一装饰器模式.Component;
 import com.tuling.springcloud.orders.设计模式.结构型一装饰器模式.ConcreteComponent;
@@ -24,6 +25,7 @@ import com.tuling.springcloud.orders.设计模式.结构型一装饰器模式.Co
 import com.tuling.springcloud.orders.设计模式.结构型一装饰器模式.Decorator;
 import com.tuling.springcloud.orders.设计模式.结构型一适配器模式.Adapter;
 import com.tuling.springcloud.orders.设计模式.结构型一适配器模式.UseTarget;
+import com.tuling.springcloud.orders.设计模式.行为模式一策略模式.*;
 import com.tuling.springcloud.orders.设计模式.行为模式一观察者模式.Observer;
 import com.tuling.springcloud.orders.设计模式.行为模式一观察者模式.Subject;
 import com.tuling.springcloud.orders.设计模式.行为模式一观察者模式.SubscriptionSubject;
@@ -138,8 +140,11 @@ public class 设计模式Test {
      */
     @Test
     public void 桥接(){
-        Computer c = new PcComputer(new BrandHuawei());
-        c.showInfo();
+        Computer c1 = new PcComputer(new BrandHuawei());
+        c1.showInfo();
+
+        Computer c2 = new NoteComputer(new BrandHuawei());
+        c2.showInfo();
     }
 
 
@@ -174,6 +179,24 @@ public class 设计模式Test {
 
         subject.notify("大兵压境");
 
+    }
+
+    @Test
+    public void 测试策略模式(){
+        Vip v1 = new VipFirst();
+        Vip v2 = new VipSecond();
+        Vip v3 = new VipThird();
+        Context context = new Context(v1);
+        Double totalPrice = context.getTotalPrice(300, 3);
+        System.out.println(totalPrice);
+
+        Context context1 = new Context(v2);
+        Double totalPrice1 = context1.getTotalPrice(300, 3);
+        System.out.println(totalPrice1);
+
+        Context context2 = new Context(v3);
+        Double totalPrice2 = context2.getTotalPrice(300, 3);
+        System.out.println(totalPrice2);
     }
 
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <context:property-placeholder location="classpath:application.yml"/>
+    <!-- 注解包扫描 -->
+    <context:component-scan base-package="com.tuling.springcloud.cycle"></context:component-scan>
+    <bean id = "aaa" class="com.tuling.springcloud.cycle.Aaa">
+        <property name="bbb" ref="bbb"/>
+    </bean>
+    <bean id="bbb" class="com.tuling.springcloud.cycle.Bbb">
+        <property name="aaa" ref="aaa"/>
+    </bean>
+</beans>
+

@@ -1,0 +1,8 @@
+package com.tuling.springcloud.stock.设计模式.创建模式.简单工厂;
+
+public class ProductX implements product {
+    @Override
+    public void say() {
+        System.out.println("我是产品X号");
+    }
+}

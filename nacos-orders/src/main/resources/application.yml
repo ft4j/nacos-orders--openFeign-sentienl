@@ -15,4 +15,5 @@ spring:
         #命名空间可以用来将服务隔离在各个不同的空间中方便管理
         #例如可以格利城dev fat等
         namespace: public
-        ephemeral:
+        ephemeral: true
+        #cluster-name:

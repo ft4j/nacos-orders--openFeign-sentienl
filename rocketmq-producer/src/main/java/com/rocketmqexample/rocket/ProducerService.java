@@ -2,11 +2,11 @@ package com.rocketmqexample.rocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.apache.rocketmq.client.producer.SendCallback;
-import org.apache.rocketmq.client.producer.SendResult;
-import org.apache.rocketmq.client.producer.SendStatus;
+import org.apache.rocketmq.client.producer.*;
+import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.spring.annotation.RocketMQTransactionListener;
+import org.apache.rocketmq.spring.core.RocketMQLocalRequestCallback;
 import org.apache.rocketmq.spring.core.RocketMQLocalTransactionListener;
 import org.apache.rocketmq.spring.core.RocketMQLocalTransactionState;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -16,12 +16,12 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 普通消息，同步 异步 单向
@@ -38,9 +38,22 @@ public class ProducerService {
 
     //发送普通消息-单项消息
     public void sendSimpleMessage() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             rocketMQTemplate.convertAndSend("firstSend", "hello world" + i);
         }
+    }
+
+    //发送普通消息 带多个key的
+    public void sendSimpleHeaderMessage() {
+//        rocketMQTemplate.convertAndSend("firstSend", MessageBuilder.withPayload("哈尔")
+//                .setHeader(RocketMQHeaders.KEYS,"123").
+//                        setHeader("UNIQ_KEY","asd123")
+//                .build());
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("KEYS","hello");
+        headers.put("UNIQ_KEY","一定义msgId");
+        rocketMQTemplate.convertAndSend("firstSend111111", "只发送msh",headers);
+
     }
 
     public void sendoneway() {
@@ -120,8 +133,21 @@ public class ProducerService {
                 System.out.println("失败");
             }
         }, 3000,1);
-    }
 
+        rocketMQTemplate.sendAndReceive("ddd", "dddd",new RocketMQLocalRequestCallback() {
+
+            @Override
+            public void onSuccess(Object message) {
+
+            }
+
+            public void onException(Throwable throwable) {
+                System.out.println("失败");
+            }
+        },"这个key保证顺序", 3000,1);
+    }
+    @Autowired
+    RocketMQTemplate myRocketMqTemplate;
     /**
      * 事务消息
      * 重试时间的16个层级：10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
@@ -133,11 +159,12 @@ public class ProducerService {
         //设置一个字符串header，用来在本地事务执行的时候，进行判断是哪个消息，应该执行哪一块的事务
         Message<MessageBody> m = MessageBuilder.withPayload(ms)
                 .setHeader(RocketMQHeaders.KEYS,MessageBody.className).build();
+        System.out.println("发送事务消息！");
         //事务消息发送，一开始发送一个半消息
-        rocketMQTemplate.sendMessageInTransaction("transaction", m, null);
+        myRocketMqTemplate.sendMessageInTransaction("transaction", m, null);
     }
 
-    @RocketMQTransactionListener
+    @RocketMQTransactionListener(rocketMQTemplateBeanName = "myRocketMqTemplate")
     class TransactionMessage implements RocketMQLocalTransactionListener {
 
         @SneakyThrows
@@ -153,17 +180,26 @@ public class ProducerService {
                 Object invoke = getName.invoke(payload);
                 ObjectMapper m = new ObjectMapper();
                 String s = m.writeValueAsString(invoke);
-
+                //在这里处理本地事务
                 System.out.println("保存数据库"+s);
+                System.out.println("RocketMQLocalTransactionState.UNKNOWN！！！！");
+                return RocketMQLocalTransactionState.UNKNOWN;
+                //return RocketMQLocalTransactionState.ROLLBACK;当本都事务出错了
+                /**
+                 * return RocketMQLocalTransactionState.UNKNOWN;出现那种可能需要时间就能恢复异常，就在返回unknown
+                 * 比如出现数据库连不上这种异常
+                 */
+            }else{
+                //在这里处理另外的本地事务
+                System.out.println("处理本地事务");
+                return RocketMQLocalTransactionState.UNKNOWN;
             }
-            //在这里处理本地事务
-            System.out.println("处理本地事务");
-            return RocketMQLocalTransactionState.COMMIT;
         }
 
         public RocketMQLocalTransactionState checkLocalTransaction(Message message) {
             MessageHeaders headers = message.getHeaders();
             Object tou = headers.get(RocketMQHeaders.KEYS);
+            System.out.println("重试了！！！！！！！！checkLocalTransaction");
             if("123".equals(tou)){
                 System.out.println("拿到对应事务消息了，处理在这个if下进行");
                 System.out.println("处理本地事务重试");
@@ -180,6 +216,57 @@ public class ProducerService {
     public void 发送普通消息(){
         rocketMQTemplate.sendOneWay("GroupFirst_topic","这是我测试发送的消息");
     }
+
+    public void 测试相同topic不同消费者组(){
+        rocketMQTemplate.sendOneWay("sameTopicDiffConsumerGroup",
+                "这是我测试发送的消息，测试相同topic不同消费者组");
+    }
+
+    public void sql92(){
+        for (int i = 0; i < 10; i++) {
+            HashMap<String, Object> harder = new HashMap<>(1);
+            harder.put("a", String.valueOf(i));
+            rocketMQTemplate.convertAndSend("GroupFirst_topic1","过滤消息测试" + i, harder);
+        }
+    }
+
+    /**
+     * syncSend可以发送字符串，也可以将对象包装在Message中，以对象形式发送，有返回值
+     *
+     * convertAndSend本质其实是syncSend，但是不提供返回值，会将发送情况进行一个日志打印
+     * 他的消息参数是Object，内部会对对象进行自动包装--doConvert()方法
+     */
+    public void 发送List对象(){
+        List<String> l = new ArrayList();
+        l.add("张三");
+        l.add("李四");
+
+        /**
+         * MessageBuilder.withPayload(l).build())  创建的message（它都不带Topic）和自己写Message并发送，不是同一个对象
+         *         这个对象需要放在defaultMQProducer中使用
+         */
+        org.apache.rocketmq.common.message.Message message =
+                new org.apache.rocketmq.common.message.Message("topic1","tag1","水哥".getBytes());
+        //怎么发
+        rocketMQTemplate.syncSend("GroupFirst_topic2",MessageBuilder.withPayload(l).build());
+        /**
+         * 这也是可以发送成功的
+         * 其实rocketMq本质只能发送Byte[]的数据，rocketMqTemplate直接发送对象，或者发送通过MessageBuilder创建的
+         * org.springframework.messaging.Message对象，其实最终都会被转为Json串后被getByte();方法转为byte[]后发送
+         */
+        rocketMQTemplate.syncSend("GroupFirst_topic2",l);
+//        rocketMQTemplate.syncSend("GroupFirst_topic2","zzxczxc");
+        List<String> lx = new ArrayList();
+        lx.add("王五");
+        lx.add("刘六");
+        rocketMQTemplate.convertAndSend("GroupFirst_topic2",lx);
+    }
+
+    public void sendGroupFirst_topic2(){
+        rocketMQTemplate.syncSend("GroupFirst_topic2","我是张三！");
+    }
+
+
 
 
     /**
@@ -229,6 +316,14 @@ public class ProducerService {
     public String sendOneMsg(){
         SendResult sendResult = rocketMQTemplate.syncSend("testMsg", "测试消息的消息体");
         return sendResult.getSendStatus().toString();
+    }
+
+    /**
+     * 试试看header可以放什么
+     */
+    public void sdsdsdsdsd(){
+        SendResult getHeaderAndId = rocketMQTemplate.syncSend("getHeaderAndId", new ArrayList<>());
+
     }
 
 }

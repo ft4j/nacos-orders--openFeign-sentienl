@@ -21,8 +21,8 @@ public class OrderController {
         this.name = name;
     }
 
-    @Autowired
-    public StockFeignService stockFeignService;
+//    @Autowired
+//    public StockFeignService stockFeignService;
     @Autowired
     public ProductFeignService productFeignService;
 
@@ -30,8 +30,8 @@ public class OrderController {
     public String add() {
         System.out.println("下单成功");
 //        String forObject = restTemplate.getForObject("http://nacos-stock/stock/declineStock", String.class);
-        String s = stockFeignService.declineStock();
-        System.out.println(s);
+//        String s = stockFeignService.declineStock();
+//        System.out.println(s);
 
         String s1 = productFeignService.selectProduct(2);
         System.out.println(s1);

@@ -7,7 +7,7 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Service;
 
 /**
- * 顺序消息的消费者
+ * 事务消息的消费者
  */
 @Service
 @RocketMQMessageListener(consumerGroup = "g3", topic = "transaction")

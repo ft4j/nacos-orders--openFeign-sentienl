@@ -61,4 +61,7 @@ nacos-stock:
     NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
 #    NFLoadBalancerRuleClassName: com.tuling.springcloud.MyRibbon
 
+yuhanyan:
+  name: 俞汉衍
+  age: 31
 

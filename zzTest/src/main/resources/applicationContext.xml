@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <context:property-placeholder location="classpath:application.properties"/>
+    <!-- 注解包扫描 -->
+    <context:component-scan base-package="com.tuling.springcloud.stock"></context:component-scan>
+    <bean id="iocBean" name="这是iocBean的名字"
+          class="com.tuling.springcloud.stock.spring.ioc.IocBean"
+          init-method="init">
+
+        <property name="firstName" value="13"></property>
+        <constructor-arg name="secondName" value="zhangsan"></constructor-arg>
+    </bean>
+    <!--这个占位符，可以被PlaceholderConfigurerSupport解析，它是beanFactoryPostProcessor的子类，可以修改beanDefinition对象 -->
+    <bean id="aa" abstract="true">
+        <property name="name" value="张三"/>
+        <property name="age"  value="${server.portsssss}"/>
+    </bean>
+    <!--parent="aa"可以让aa这个父类被独立出来，现在factoryBeanImp中也包含了name和age属性
+    并且aa由于abstract="true"，它不会被实例化，它只会被它的子类引用，事实上aa都没有一个aa.java去跟他对应 -->
+    <bean id="factoryBeanImp" scope="singleton" parent="aa"
+          class="com.tuling.springcloud.stock.spring.ioc.FactoryBeanImp"></bean>
+
+    <bean id="userBiaoqian" class="com.tuling.springcloud.stock.spring.ioc.UserBiaoqian"
+          scope="singleton" lazy-init="true">
+        <property name="ss" value="这是ss的值"/>
+        <constructor-arg name="dd" value="xx"></constructor-arg>
+    </bean>
+<!--    &lt;!&ndash; 引入DB配置文件 &ndash;&gt;-->
+
+    <bean id="扩展bean" class="com.tuling.springcloud.stock.spring.ioc.bean.扩展bean">
+        <property name="itsName" value="${server.portsssss}"/>
+    </bean>
+    <bean id="myAwareBean" class="com.tuling.springcloud.stock.spring.ioc.bean.MyAwareBean">
+
+    </bean>
+</beans>
+

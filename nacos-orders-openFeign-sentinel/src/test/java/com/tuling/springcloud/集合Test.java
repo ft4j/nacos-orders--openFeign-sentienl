@@ -23,7 +23,23 @@ public class 集合Test {
         Map<String,String> ss = new HashMap<String,String>();
         ss.put("","");
     }
-
+    @Test
+    public void sdfsdfsaaaaaad() {
+        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+        map.put("apple", 5);
+        map.put("banana", 3);
+        map.put("applexzzz", 999);
+        // 对键为"apple"的值加 2    compute方法可以让不存在的键值存入map中或线程安全地堆value进行计算
+        //由于这个方法包括了put的功能所以，key也作为参数传入了
+        map.compute("apple", (k, v) -> 7);
+        System.out.println(map.get("apple")); // 输出 7
+        //如果key：apple不存在，那么将key：applex value：4存入map，如果存在则不操作
+        map.computeIfAbsent("applex", k -> 4);
+        System.out.println(map.get("applex")); // 输出 4
+        //如果applexzzz存在，就将applexzzz的value设为90，如果不存在，则不会将applexzzz的键值对存入map中
+        map.computeIfPresent("applexzzz", (k, v) -> 90);
+        System.out.println(map.get("applexzzz")); // 输出 90
+    }
     @Test
     public void fsdfdf(){
         int i1 = 6546841 ^ 15;
@@ -179,6 +195,22 @@ public class 集合Test {
         System.out.println(equals);
     }
 
+    @Test
+    public void dddsdas() throws InterruptedException {
+        HashMap m = new HashMap();
+        Object put = m.put("1", "2");
+        Object put1 = m.put("1", "3");
+        System.out.println(put);//这是null
+        System.out.println(put1);//这是2，那个被替换的value会被返回
+    }
 
+    @Test
+    public void sdsdfsdf(){
+        Set s = new HashSet();
+        boolean ddd = s.add("ddd");//true
+        System.out.println(ddd);
+        boolean dddd = s.add("ddd");//false 元素已经存在了
+        System.out.println(dddd);
+    }
 
 }

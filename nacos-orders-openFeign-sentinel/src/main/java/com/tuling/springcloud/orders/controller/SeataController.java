@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 常见的分布式事务解决方案
  *  1、seata阿里分布式事务框架 at (其实seata提供所有的模式，at tcc saga xa，默认at)
- *  2、消息队列              tcc
- *  3、saga                saga
- *  4、XA                   xa
+ *  2、消息队列              tcc  让人无语，谁会这么搞啊？
+ *  3、saga                saga  这他妈傻逼吧？当对方服务不能被我们素影响时，只能用这种方式
+ *  4、XA                   xa  支持XA协议的数据库都可以，sql执行后不commit，直到所有微服务的数据库的sql全部执行完成之后，TC会统一让所有sql进行commit！
  *
  *
  *  分布式事务的提交协议：2pc和3pc
@@ -57,7 +57,7 @@ import org.springframework.web.bind.annotation.RestController;
  *      8、把原先写@Transactional的地方改为@GlobalTransactional
  *
  *
- *    注1、这是seata配置问价中配置的，关于seata的服务信息，它是一个注册再127.0.0.1:8848这个nacos中的名称为seata-server(TC)的服务
+ *    注1、这是seata配置文件中配置的，关于seata的服务信息，它是一个注册再127.0.0.1:8848这个nacos中的名称为seata-server(TC)的服务
  *    nacos {
  *     application = "seata-server"
  *     serverAddr = "127.0.0.1:8848"

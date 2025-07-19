@@ -27,12 +27,11 @@ public class SourceProductTest {
         dmp.setDefaultTopicQueueNums(10);
         dmp.start();
         for (int i = 0; i < 1; i++) {
-            Message message = new Message("TopicTest","*","中国有斯哈".getBytes());
+            Message message = new Message("ccc","*","中国有斯哈".getBytes());
 
             SendResult send = dmp.send(message);
-            System.out.println(send.getMsgId());
-            System.out.println(send.getOffsetMsgId());
-            System.out.println("ddd");
+            System.out.println("msgId:"+send.getMsgId());
+            System.out.println("offsetMsgId:"+send.getOffsetMsgId());
         }
         dmp.shutdown();
     }
@@ -77,6 +76,28 @@ public class SourceProductTest {
                     return new ArrayList<>(s);
                 }
             }
+        }
+    }
+
+    @Test
+    public void dddsdasd(){
+        String id = "3";
+        switch(id){
+            case "1":
+                System.out.println("111");
+                break;
+            case "2":
+                System.out.println("2222");
+                break;
+            case "3":
+                System.out.println("dddd");
+            default:
+                System.out.println("default了");
+        }
+
+        List a = new ArrayList();
+        for (Object o : a) {
+
         }
     }
 

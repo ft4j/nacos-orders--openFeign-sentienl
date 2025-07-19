@@ -14,6 +14,12 @@
         <module>zzTest</module>
         <module>rocketmq-consumer</module>
         <module>rocketmq-producer</module>
+        <module>springbootTest</module>
+        <module>hyxtrix-demo</module>
+        <module>com.starter</module>
+        <module>XmlSpring</module>
+        <module>gateway</module>
+        <module>security</module>
     </modules>
 <!--    <parent>-->
 <!--        -->
@@ -74,10 +80,10 @@
             <artifactId>redisson</artifactId>
             <version>3.6.5</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-web</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.projectlombok</groupId>

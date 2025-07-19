@@ -20,10 +20,13 @@ public class JdkLockTest {
      * @throws InterruptedException
      */
     @Test
-    public void ReentrantLock() throws InterruptedException {
+    public synchronized void ReentrantLock() throws InterruptedException {
         ReentrantLock lock = new ReentrantLock(true);
         lock.lock();
         lock.lock();
+        lock.lockInterruptibly();
+        lock.tryLock();
+        lock.tryLock(10,TimeUnit.SECONDS);
         lock.unlock();
         /**
          * tryLock会尝试去加锁，成功返回true，失败返回false
@@ -41,6 +44,8 @@ public class JdkLockTest {
          * 无限等待的加锁操作，加锁不成功就一直等待
          */
         lock.lock();
+        lock.unlock();
+        lock.lockInterruptibly();
         lock.unlock();
     }
 
@@ -91,11 +96,13 @@ public class JdkLockTest {
     public void testLockInterruptibly() throws InterruptedException {
         ReentrantLock lock = new ReentrantLock();
         Thread t1 = new Thread(() -> {
-
             try {
-                lock.lockInterruptibly();
-                Thread.sleep(Integer.MAX_VALUE);
-            } catch (InterruptedException e) {
+                lock.lock();
+                while(true) {
+
+                }
+            } catch (Exception e) {
+                System.out.println("线程 t1被施加interrupty");
                 e.printStackTrace();
             } finally {
                 lock.unlock();
@@ -124,13 +131,22 @@ public class JdkLockTest {
         });
         t2.start();
         Thread.sleep(1000);
+        System.out.println("t1开始被打断");
         t1.interrupt(); // 中断t1线程，使t1线程可以释放锁
+        Thread.sleep(10000);
     }
 
 
     /**
      * 注意，读写锁指的是读锁和写锁两个代码块之前互相影响
-     * 读锁锁住代码块1，那么写锁包含的代码块就hold住了，读写锁可以一把锁锁两块代码
+     * 读锁被一个线程持有，其他线程还可以继续使用读锁
+     * 读锁被一个线程持有，其他线程不能获取写锁
+     * 写锁被一个线程持有，其他线程既不能读也不能写
+     * 读写锁比一般锁更具灵活性
+     *
+     * ReentrantReadWriteLock有锁升级和降级的过程，这一行为发生在同一线程中，可以让锁在重入时进行锁降级
+     * 也就是写锁可以降级为读锁，但是读锁不能升级为写锁
+     * 先写锁加锁，然后读锁加锁，然后写锁释放锁，锁就降级为读锁了
      */
     private Map<String, Object> map = new ConcurrentHashMap<>();
     private ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
@@ -235,6 +251,30 @@ public class JdkLockTest {
             e.printStackTrace();
         }finally {
             rw.unlock();
+        }
+    }
+
+
+    @Test
+    public void sddfsdf(){
+        String a = "a";
+        String b = "b";
+        String c = "c";
+        a = b = c;
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(c);
+        int ddd = ddd();
+        System.out.println(ddd);
+    }
+
+    public int ddd(){
+        try {
+            return 1;
+        } finally {
+            System.out.println("finally块执行");
+            //这个return会覆盖上面的return
+            return 2;
         }
     }
 

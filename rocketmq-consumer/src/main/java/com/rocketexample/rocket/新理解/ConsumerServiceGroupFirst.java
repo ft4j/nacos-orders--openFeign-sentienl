@@ -17,19 +17,21 @@ import org.springframework.stereotype.Component;
  * 这是一个存在于消费组GroupFirst中的一个消费者，消费的topic为GroupFirst_topic
  */
 @Component
-@RocketMQMessageListener(topic = "GroupFirst_topic",consumerGroup = "GroupFirst")
-//tag过滤：selectorType = SelectorType.TAG,selectorExpression="tag1||tag2"
+//tag过滤：只获取tag1||tag2的
+@RocketMQMessageListener(topic = "GroupFirst_topic",consumerGroup = "GroupFirst",
+        selectorType = SelectorType.TAG,selectorExpression="tag1||tag2")
+
 //广播模式和集群模式:messageModel = MessageModel.BROADCASTING
 /**
  * 注意哦，rocketMq的消费者是并发消费的，即使消息都在一个queue，被同一台服务消费也可能出现顺序不一致，所以需要这个参数保证消息的顺序消费
  */
 //该模式可以实现顺序消费：consumeMode = ConsumeMode.ORDERLY
-public class ConsumerServiceGroupFirst implements RocketMQListener<String>
+public class ConsumerServiceGroupFirst implements RocketMQListener<MessageExt>
 {
 
     @Override
-    public void onMessage(String s) {
-        System.out.println(s+"消费者本体");
+    public void onMessage(MessageExt s) {
+        System.out.println(s.getBody()+"消费者本体");
     }
 
 //    @SneakyThrows

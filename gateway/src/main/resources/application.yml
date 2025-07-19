@@ -1,0 +1,59 @@
+server:
+  port: 8093
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        username: nacos
+        password: nacos
+    gateway:
+      discovery:
+        locator:
+          enabled: true #开启服务注册与发现功能
+          lower-case-service-id: true #将服务名称全部转为小写
+      #看下XmlSpring下的controller，它里面包含了/demo/one的controller
+      #http://127.0.0.1:8093/one?abc=aa&bcd=dddx&cde=xxx 这个请求现在是合法的！
+      routes:
+        #id是一个路由的唯一主键，随便起名
+        - id: firstRoute
+          #uri指的是需要路由的服务，可以直接ip+port，如果在注册中心下，可以是如下写法，lb的load balance的意思
+          uri: lb://gatewayDemo
+          #predicates就是路由能不能走下去过去的断言，是用来匹配这个请求是否合法的！ 注意predicate都是在请求之前做的，这个区别于filter
+          predicates:
+           #Path
+           - Path=/one
+           #Query 参数里都得有abc
+           - Query=abc
+           #Query 参数里都得有bcd，逗号后面是正则表达式，表示必须的ddd后面跟任意一个字符！
+           - Query=bcd,ddd.
+           #Query 参数里都得有cde，且值必须是xxx
+           - Query=cde,xxx
+           #请求头中必须有Connection这个参数，且值必须为keep-alive
+           - Header=Connection,keep-alive
+           #表示请求方式必须为post或者get，注意这个请求类型指的是请求网关的请求类型，网关请求微服务都是post
+           - Method=GET,POST
+           #可以访问这个网关的IP地址
+           - RemoteAddr=127.0.0.1 #192.168.1.0/24：表示从192.168.1.0到192.168.1.255的 IP 地址范围。
+           #F12打开netWork之后，可以看到请求header中，有一个host的参数，这个Host就是把这个参数单拎出来了！
+           - Host=127.0.0.1:8093
+           #还有三个时间断言  Before After Between
+           #Weight负载均衡，这个需要配置多个路由，然后分别配置相同的负载均衡组，然后配置对应的权重参数，实现负载均衡。默认是轮询！
+           #这是在多个微服务之间进行负载均衡，同名的不行！
+          #Filter是干啥的？添加参数！
+          filters:
+            #给请求头添加参数123
+           - AddRequestHeader=abc,123
+            #添加get请求中的参数456
+           - AddRequestParam=param,456
+        - id: secondRoute
+          uri: lb://gatewayDemo
+          predicates:
+           - Path=/demo/one
+#           - Weight=weightGroup:3
+#        - id: thirdRoute
+#          uri: lb://gatewayDemo
+#          predicates:
+#           - Path=/demo/one
+#           - Weight=weightGroup:3

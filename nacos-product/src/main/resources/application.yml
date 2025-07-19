@@ -22,7 +22,7 @@ spring:
     url: jdbc:mysql://localhost:3306/mybatis_plus?useSSL=true&amp;useUnicode=true&amp;characterEncoding=utf-8
     username: root
     password: Qq123456
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
 #这是mybatis所使用的配置
 mybatis:
   type-aliases-package: com.tuling.springcloud.orders.domain
