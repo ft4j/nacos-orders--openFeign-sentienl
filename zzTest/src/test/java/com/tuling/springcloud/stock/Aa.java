@@ -5,8 +5,7 @@ import org.junit.Test;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
+import com.tuling.springcloud.stock.Aa.Ceshi;
 
 public class Aa {
     @Test
@@ -36,9 +35,11 @@ public class Aa {
 
     @Test
     public void dssdfs(){
-
-
-
-
+        //就是为了语义的歧义
+        Ceshi str = new Ceshi();
+        Runnable run = ()->{
+            System.out.println(str);
+        };
+        //Ceshi str = new Ceshi();就是为了语义的歧义
     }
 }
