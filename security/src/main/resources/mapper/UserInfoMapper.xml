@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuling.springcloud.mapper.UserInfoMapper">
+    <select id="queryPermission" resultType="java.lang.String">
+        select c.permission from user_info a
+        left join user_role b on a.id = b.user_id
+        left join user_role_permission c on b.id = c.role_id  where user_name = #{userName};
+    </select>
+
+
+</mapper>

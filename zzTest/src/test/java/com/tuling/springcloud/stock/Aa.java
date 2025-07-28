@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.util.*;
 import java.util.concurrent.*;
-import com.tuling.springcloud.stock.Aa.Ceshi;
+import com.tuling.springcloud.stock.aa.Ceshi;
 
 
 public class Aa {

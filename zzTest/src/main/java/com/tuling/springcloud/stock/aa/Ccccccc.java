@@ -1,8 +1,7 @@
-package com.tuling.springcloud.stock.Aa;
+package com.tuling.springcloud.stock.aa;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.lang.annotation.Inherited;
 @AnnotationForTest
 public class Ccccccc {
 

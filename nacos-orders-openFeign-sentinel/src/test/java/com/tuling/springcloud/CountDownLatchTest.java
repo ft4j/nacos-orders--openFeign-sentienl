@@ -109,6 +109,8 @@ public class CountDownLatchTest {
             try {
                 System.out.println("A执行获取permit");
                 s.acquire();
+                s.tryAcquire();
+                s.tryAcquire(2);
                 for (int i = 0; i < 120000000; i++) {
 
                 }

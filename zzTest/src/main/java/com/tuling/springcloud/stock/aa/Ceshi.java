@@ -1,4 +1,4 @@
-package com.tuling.springcloud.stock.Aa;
+package com.tuling.springcloud.stock.aa;
 
 public class Ceshi extends 抽象类{
 

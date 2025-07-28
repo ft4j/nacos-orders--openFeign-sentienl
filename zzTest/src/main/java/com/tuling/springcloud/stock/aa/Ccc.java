@@ -1,20 +1,18 @@
-package com.tuling.springcloud.stock.Aa;
+package com.tuling.springcloud.stock.aa;
 
 import org.junit.Test;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 public class Ccc {
     @Test
     @Transactional
     public void dd() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
-        Class c = Class.forName("com.tuling.springcloud.stock.Aa.Ccccccc");
+        Class c = Class.forName("com.tuling.springcloud.stock.aa.Ccccccc");
         Object o = c.newInstance();
         Annotation annotation = c.getAnnotation(AnnotationForTest.class);
         System.out.println(annotation);

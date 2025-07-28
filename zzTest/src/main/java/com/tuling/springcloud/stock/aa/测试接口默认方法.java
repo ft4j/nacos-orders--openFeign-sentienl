@@ -1,4 +1,4 @@
-package com.tuling.springcloud.stock.Aa;
+package com.tuling.springcloud.stock.aa;
 
 public interface 测试接口默认方法 {
     public void dd();
